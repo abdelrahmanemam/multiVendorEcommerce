@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\MerchantController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+$router->group(['namespace' => 'Api'], function () use ($router) {
+
+    $router->group(['prefix' => 'user'], function () use ($router) {
+        $router->post('register', [UserController::class, 'register']);
+        $router->post('login', [UserController::class, 'login']);
+    });
+
+    $router->group(['prefix' => 'merchant'], function () use ($router) {
+        $router->post('register', [MerchantController::class, 'register']);
+        $router->post('login', [MerchantController::class, 'login']);
+    });
+
+    $router->group(['middleware' => 'auth:api'], function () use ($router) {
+
+    });
 });

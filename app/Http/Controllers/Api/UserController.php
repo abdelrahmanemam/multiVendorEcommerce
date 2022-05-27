@@ -1,27 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Merchant;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class MerchantController extends Controller
+class UserController extends Controller
 {
     public function register(Request $request)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed'
         ]);
 
-        $data['password'] = bcrypt($request->password);
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()->all()], 422);
+        }
 
-        $user = Merchant::create($data);
+        $request['password'] = bcrypt($request->password);
+
+        $user = User::create($request->all());
 
         $token = $user->createToken('API Token')->accessToken;
 
-        return response([ 'user' => $user, 'token' => $token]);
+        return response(['user' => $user, 'token' => $token]);
     }
 
     public function login(Request $request)
@@ -35,7 +41,7 @@ class MerchantController extends Controller
             return response(['error_message' => 'Unauthorized']);
         }
 
-        $token = auth()->user()->createToken('API Token')->accessToken;
+        $token = auth()->user()->createToken('User Token')->accessToken;
 
         return response(['user' => auth()->user(), 'token' => $token]);
     }
