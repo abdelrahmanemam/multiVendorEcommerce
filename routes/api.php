@@ -30,5 +30,13 @@ $router->group(['namespace' => 'Api'], function () use ($router) {
 
     $router->group(['middleware' => 'auth:api'], function () use ($router) {
 
+        $router->group(['prefix' => 'merchant'], function () use ($router) {
+            $router->post('create-store', [MerchantController::class, 'createStore']);
+            $router->post('include-vat', [MerchantController::class, 'includeVat']);
+            $router->post('exclude-vat', [MerchantController::class, 'excludeVat']);
+            $router->post('include-shipping', [MerchantController::class, 'includeShipping']);
+            $router->post('exclude-shipping', [MerchantController::class, 'excludeShipping']);
+        });
+
     });
 });
