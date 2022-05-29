@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Product;
+use App\Services\OrderService;
 use App\Traits\StoreTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,38 +37,43 @@ class OrderController extends Controller
 
         $productArr = json_decode($request->products, true);
 
-        self::checkProduct($productArr);
+        OrderService::checkProduct($productArr);
 
         $order = Order::create([
             'user_id' => $this->user->id,
             'store_id' => $request->store_id
         ]);
 
+        $orderTotal = 0;
+
         foreach ($productArr as $product) {
+
+            $productTotal = OrderService::getProductPrice($product['id']) * $product['quantity'];
+
+            $orderTotal += $productTotal;
+
             OrderProduct::create([
                 'order_id' => $order->id,
                 'product_id' => $product['id'],
                 'quantity' => $product['quantity'],
-                'total' => self::getProductPrice($product['id']) * $product['quantity']
+                'total' => $productTotal
             ]);
         }
 
+        $orderTotal += OrderService::calculateShipping($request->store_id) + ($orderTotal * OrderService::calculateVat($request->store_id) / 100);
+        $order->update(['total' => $orderTotal]);
 
+        return response("Order added to your cart, total = $orderTotal L.E");
     }
 
-    /**
-     * @throws Exception
-     */
-    private static function checkProduct($products)
+    public function cartTotal()
     {
-        foreach ($products as $product) {
-            $productExist = Product::find($product['id']);
-            if (!$productExist) throw new Exception('Product does not exist');
-        }
-    }
+        $order = Order::where('user_id', $this->user->id)
+            ->where('status', 0)
+            ->first();
 
-    private static function getProductPrice($productId)
-    {
-        return Product::find($productId)->price;
+        if (!$order) return response('Add order first');
+
+        return response("Total cart is: $order->total L.E");
     }
 }

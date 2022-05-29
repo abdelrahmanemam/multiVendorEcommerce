@@ -19,6 +19,7 @@ class Order extends Model
         'user_id',
         'store_id',
         'status',
+        'total',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

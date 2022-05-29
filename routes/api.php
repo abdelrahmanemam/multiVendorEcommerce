@@ -47,6 +47,7 @@ $router->group(['namespace' => 'Api'], function () use ($router) {
 
         $router->group(['prefix' => 'order'], function () use ($router) {
             $router->post('create', [OrderController::class, 'create']);
+            $router->post('cart-total', [OrderController::class, 'cartTotal']);
         });
     });
 
