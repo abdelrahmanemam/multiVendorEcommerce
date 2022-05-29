@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class Order extends Model
 {
     use HasFactory;
 
@@ -14,12 +14,22 @@ class Store extends Model
      *
      * @var array<int, string>
      */
+
     protected $fillable = [
-        'name',
-        'vat',
-        'shipping',
-        'merchant_id',
+        'user_id',
+        'store_id',
+        'status',
     ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function store(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Store::class);
+    }
 
     public function products(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

@@ -25,9 +25,9 @@ class CreateStoreProductsTable extends Migration
                 ->on('products')
                 ->references('id');
 
-            $table->string('name')->nullable();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->double('price')->nullable();
+            $table->string('lang')->nullable();
             $table->timestamps();
         });
     }

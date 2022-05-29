@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\MerchantController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ $router->group(['namespace' => 'Api'], function () use ($router) {
         $router->post('login', [MerchantController::class, 'login']);
     });
 
-    $router->group(['middleware' => 'auth:api'], function () use ($router) {
+    $router->group(['middleware' => 'auth:merchant'], function () use ($router) {
 
         $router->group(['prefix' => 'merchant'], function () use ($router) {
             $router->post('create-store', [MerchantController::class, 'createStore']);
@@ -38,5 +38,16 @@ $router->group(['namespace' => 'Api'], function () use ($router) {
             $router->post('exclude-shipping', [MerchantController::class, 'excludeShipping']);
         });
 
+        $router->group(['prefix' => 'product'], function () use ($router) {
+            $router->post('create', [ProductController::class, 'create']);
+        });
     });
+
+    $router->group(['middleware' => 'auth:api'], function () use ($router) {
+
+        $router->group(['prefix' => 'order'], function () use ($router) {
+            $router->post('create', [OrderController::class, 'create']);
+        });
+    });
+
 });

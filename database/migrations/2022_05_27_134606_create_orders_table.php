@@ -24,6 +24,7 @@ class CreateOrdersTable extends Migration
                 ->on('stores')
                 ->references('id');
             $table->tinyInteger('status')->default(0);
+            $table->double('total')->nullable();
             $table->timestamps();
         });
     }

@@ -25,7 +25,7 @@ class UserController extends Controller
 
         $user = User::create($request->all());
 
-        $token = $user->createToken('API Token')->accessToken;
+        $token = $user->createToken('User Token')->accessToken;
 
         return response(['user' => $user, 'token' => $token]);
     }
