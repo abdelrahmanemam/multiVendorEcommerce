@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderProduct;
-use App\Models\Product;
 use App\Services\OrderService;
 use App\Traits\StoreTrait;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -63,7 +61,7 @@ class OrderController extends Controller
         $orderTotal += OrderService::calculateShipping($request->store_id) + ($orderTotal * OrderService::calculateVat($request->store_id) / 100);
         $order->update(['total' => $orderTotal]);
 
-        return response("Order added to your cart, total = $orderTotal L.E");
+        return response("Order added to your cart, total = $orderTotal L.E", 200);
     }
 
     public function cartTotal()
@@ -72,8 +70,8 @@ class OrderController extends Controller
             ->where('status', 0)
             ->first();
 
-        if (!$order) return response('Add order first');
+        if (!$order) return response('Add order first', 404);
 
-        return response("Total cart is: $order->total L.E");
+        return response("Total cart is: $order->total L.E", 200);
     }
 }
